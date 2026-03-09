@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agents 101 — TinyFish Workshop</title>
+
+    <!-- Fonts: Inter for headlines, IBM Plex Mono for body/labels -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES — TINYFISH BRAND
+           =========================================== */
+        :root {
+            --bg: #F0EFEA;
+            --ink: #111111;
+            --accent: #E8611A;
+            --rule: rgba(0,0,0,0.07);
+
+            --font-headline: 'Inter', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+
+            --title-size: clamp(2.5rem, 7vw, 5.5rem);
+            --h2-size: clamp(2rem, 5.5vw, 4.5rem);
+            --h3-size: clamp(1.2rem, 2.5vw, 1.75rem);
+            --body-size: clamp(0.8rem, 1.4vw, 1.1rem);
+            --label-size: clamp(0.6rem, 0.9vw, 0.8rem);
+            --small-size: clamp(0.55rem, 0.8vw, 0.7rem);
+
+            --slide-padding: clamp(1.5rem, 5vw, 5rem);
+            --content-gap: clamp(0.75rem, 2vw, 2rem);
+            --element-gap: clamp(0.25rem, 1vw, 1rem);
+
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration: 0.6s;
+        }
+
+        /* ===========================================
+           RESET & BASE
+           =========================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ===========================================
+           VIEWPORT FITTING: MANDATORY BASE STYLES
+           =========================================== */
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+        html {
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: var(--font-mono);
+            font-size: var(--body-size);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding: var(--slide-padding);
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-height: 100%;
+            overflow: hidden;
+        }
+
+        /* ===========================================
+           TYPOGRAPHY
+           =========================================== */
+        h1, h2 {
+            font-family: var(--font-headline);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            line-height: 0.92;
+            color: var(--ink);
+        }
+        h1 { font-size: var(--title-size); }
+        h2 { font-size: var(--h2-size); }
+
+        /* Labels — mono, all caps, wide tracking */
+        .label {
+            font-family: var(--font-mono);
+            font-size: var(--label-size);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--ink);
+        }
+
+        /* Body text */
+        .body-text {
+            font-family: var(--font-mono);
+            font-size: var(--body-size);
+            font-weight: 400;
+            line-height: 1.6;
+            max-width: 52ch;
+        }
+
+        /* ===========================================
+           ELEMENTS — PILLS, CTA, TICKER
+           =========================================== */
+
+        /* Category pill */
+        .pill {
+            display: inline-block;
+            background: var(--accent);
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: var(--label-size);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.25em 0.75em;
+            border-radius: 3px;
+        }
+
+        /* CTA box */
+        .cta {
+            display: inline-block;
+            background: var(--ink);
+            color: var(--bg);
+            font-family: var(--font-mono);
+            font-size: var(--label-size);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.5em 1.25em;
+        }
+
+        /* Section divider line */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: var(--ink);
+            margin: var(--element-gap) 0;
+        }
+
+        /* Hairline rules */
+        .hairline {
+            width: 100%;
+            height: 1px;
+            background: var(--rule);
+        }
+
+        /* ===========================================
+           TICKER STRIP
+           =========================================== */
+        .ticker {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--ink);
+            color: var(--bg);
+            font-family: var(--font-mono);
+            font-size: var(--small-size);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.6em 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .ticker-inner {
+            display: inline-block;
+            animation: ticker-scroll 30s linear infinite;
+        }
+        @keyframes ticker-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ===========================================
+           SLIDE LAYOUTS
+           =========================================== */
+
+        /* Title slide */
+        .title-slide {
+            justify-content: flex-end;
+            padding-bottom: clamp(4rem, 8vh, 8rem);
+        }
+        .title-slide .subtitle {
+            font-family: var(--font-mono);
+            font-size: clamp(0.8rem, 1.3vw, 1.1rem);
+            font-weight: 400;
+            margin-top: var(--content-gap);
+            max-width: 40ch;
+        }
+        .title-slide .meta {
+            font-family: var(--font-mono);
+            font-size: var(--label-size);
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: var(--element-gap);
+            opacity: 0.6;
+        }
+
+        /* Content slide — heading top, content below */
+        .content-slide .slide-content {
+            justify-content: flex-start;
+            padding-top: clamp(2rem, 5vh, 5rem);
+            gap: var(--content-gap);
+        }
+
+        /* Two-column comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(1.5rem, 3vw, 3rem);
+            margin-top: var(--content-gap);
+        }
+        .comparison-col {
+            display: flex;
+            flex-direction: column;
+            gap: var(--element-gap);
+        }
+
+        /* Flow diagram */
+        .flow {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.5rem, 1.5vw, 1.5rem);
+            flex-wrap: wrap;
+            margin-top: var(--content-gap);
+        }
+        .flow-step {
+            font-family: var(--font-mono);
+            font-size: clamp(0.85rem, 1.6vw, 1.3rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.5em 1em;
+            border: 2px solid var(--ink);
+        }
+        .flow-arrow {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* Three-up cards */
+        .three-up {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(1rem, 2vw, 2rem);
+            margin-top: var(--content-gap);
+        }
+        .card {
+            border-top: 2px solid var(--ink);
+            padding-top: var(--element-gap);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.3rem, 0.6vw, 0.5rem);
+        }
+        .card-title {
+            font-family: var(--font-headline);
+            font-weight: 900;
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            letter-spacing: -0.02em;
+        }
+        .card-text {
+            font-family: var(--font-mono);
+            font-size: var(--body-size);
+            font-weight: 400;
+            line-height: 1.5;
+            opacity: 0.8;
+        }
+
+        /* Code-style block */
+        .code-block {
+            background: var(--ink);
+            color: var(--bg);
+            font-family: var(--font-mono);
+            font-size: clamp(0.7rem, 1.1vw, 0.95rem);
+            padding: clamp(1rem, 2vw, 1.5rem);
+            border-radius: 2px;
+            line-height: 1.7;
+            overflow: hidden;
+            margin-top: var(--element-gap);
+        }
+        .code-block .accent { color: var(--accent); }
+        .code-block .dim { opacity: 0.5; }
+
+        /* Bullet list */
+        .bullet-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.4rem, 1vh, 0.8rem);
+        }
+        .bullet-list li {
+            font-family: var(--font-mono);
+            font-size: var(--body-size);
+            line-height: 1.5;
+            padding-left: 1.5em;
+            position: relative;
+        }
+        .bullet-list li::before {
+            content: '\25C6';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 0.6em;
+            top: 0.4em;
+        }
+
+        /* Model tier row */
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(1rem, 2vw, 2rem);
+            margin-top: var(--content-gap);
+        }
+        .tier {
+            border-top: 2px solid var(--ink);
+            padding-top: var(--element-gap);
+        }
+        .tier-label {
+            font-family: var(--font-mono);
+            font-size: var(--label-size);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5em;
+        }
+        .tier-models {
+            font-family: var(--font-mono);
+            font-size: var(--body-size);
+            font-weight: 700;
+        }
+        .tier-use {
+            font-family: var(--font-mono);
+            font-size: var(--small-size);
+            opacity: 0.7;
+            margin-top: 0.3em;
+            line-height: 1.5;
+        }
+
+        /* Slide number */
+        .slide-num {
+            position: absolute;
+            top: var(--slide-padding);
+            right: var(--slide-padding);
+            font-family: var(--font-mono);
+            font-size: var(--small-size);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.4;
+        }
+
+        /* ===========================================
+           ANIMATIONS
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity var(--duration) var(--ease-out-expo),
+                        transform var(--duration) var(--ease-out-expo);
+        }
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal:nth-child(1) { transition-delay: 0.05s; }
+        .reveal:nth-child(2) { transition-delay: 0.15s; }
+        .reveal:nth-child(3) { transition-delay: 0.25s; }
+        .reveal:nth-child(4) { transition-delay: 0.35s; }
+        .reveal:nth-child(5) { transition-delay: 0.45s; }
+        .reveal:nth-child(6) { transition-delay: 0.55s; }
+
+        .reveal-fast {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s var(--ease-out-expo),
+                        transform 0.4s var(--ease-out-expo);
+        }
+        .slide.visible .reveal-fast {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Staggered grid children */
+        .slide.visible .three-up .card:nth-child(1) { transition-delay: 0.1s; }
+        .slide.visible .three-up .card:nth-child(2) { transition-delay: 0.2s; }
+        .slide.visible .three-up .card:nth-child(3) { transition-delay: 0.3s; }
+
+        .slide.visible .tier-grid .tier:nth-child(1) { transition-delay: 0.1s; }
+        .slide.visible .tier-grid .tier:nth-child(2) { transition-delay: 0.2s; }
+        .slide.visible .tier-grid .tier:nth-child(3) { transition-delay: 0.3s; }
+
+        .slide.visible .flow .flow-step,
+        .slide.visible .flow .flow-arrow {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .flow .flow-step,
+        .flow .flow-arrow {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s var(--ease-out-expo),
+                        transform 0.4s var(--ease-out-expo);
+        }
+        .flow > :nth-child(1) { transition-delay: 0.1s; }
+        .flow > :nth-child(2) { transition-delay: 0.15s; }
+        .flow > :nth-child(3) { transition-delay: 0.2s; }
+        .flow > :nth-child(4) { transition-delay: 0.25s; }
+        .flow > :nth-child(5) { transition-delay: 0.3s; }
+        .flow > :nth-child(6) { transition-delay: 0.35s; }
+        .flow > :nth-child(7) { transition-delay: 0.4s; }
+        .flow > :nth-child(8) { transition-delay: 0.45s; }
+        .flow > :nth-child(9) { transition-delay: 0.5s; }
+
+        /* ===========================================
+           PROGRESS BAR
+           =========================================== */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--accent);
+            z-index: 9999;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* ===========================================
+           NAV DOTS
+           =========================================== */
+        .nav-dots {
+            position: fixed;
+            right: clamp(0.75rem, 2vw, 1.5rem);
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 9998;
+        }
+        .nav-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--ink);
+            opacity: 0.15;
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.3s;
+            border: none;
+            padding: 0;
+        }
+        .nav-dot.active {
+            opacity: 0.8;
+            transform: scale(1.4);
+        }
+
+        /* ===========================================
+           RESPONSIVE BREAKPOINTS
+           =========================================== */
+        @media (max-height: 700px) {
+            :root {
+                --slide-padding: clamp(0.75rem, 3vw, 2rem);
+                --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+                --title-size: clamp(1.8rem, 5.5vw, 3.5rem);
+                --h2-size: clamp(1.5rem, 4.5vw, 3rem);
+            }
+        }
+        @media (max-height: 600px) {
+            :root {
+                --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+                --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+                --title-size: clamp(1.4rem, 4.5vw, 2.5rem);
+                --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+            }
+            .nav-dots { display: none; }
+        }
+        @media (max-height: 500px) {
+            :root {
+                --slide-padding: clamp(0.4rem, 2vw, 1rem);
+                --title-size: clamp(1.2rem, 4vw, 2rem);
+                --h2-size: clamp(1rem, 3vw, 1.5rem);
+                --body-size: clamp(0.65rem, 1vw, 0.85rem);
+            }
+        }
+        @media (max-width: 768px) {
+            .three-up, .tier-grid { grid-template-columns: 1fr; }
+            .comparison { grid-template-columns: 1fr; gap: var(--content-gap); }
+        }
+
+        /* ===========================================
+           REDUCED MOTION
+           =========================================== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.2s !important;
+            }
+            html { scroll-behavior: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Navigation dots -->
+    <nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+
+    <!-- ===========================================
+         SLIDE 1: TITLE
+         =========================================== -->
+    <section class="slide title-slide" aria-label="Title">
+        <span class="slide-num">01 / 13</span>
+        <div class="pill reveal" style="margin-bottom: var(--content-gap);">TINYFISH WORKSHOP</div>
+        <h1 class="reveal">AI Agents<br>101.</h1>
+        <p class="subtitle reveal">What it takes to build AI systems that work.</p>
+        <p class="meta reveal">Pranav Janakiraman &mdash; NUS Hackers</p>
+        <div class="ticker">
+            <span class="ticker-inner">
+                OBSERVE &#9670; DECIDE &#9670; ACT &#9670; REPEAT &#9670; PERCEPTION &#9670; DECISION &#9670; ACTION &#9670; TOOLS &#9670; MEMORY &#9670; GUARDRAILS &#9670;
+                OBSERVE &#9670; DECIDE &#9670; ACT &#9670; REPEAT &#9670; PERCEPTION &#9670; DECISION &#9670; ACTION &#9670; TOOLS &#9670; MEMORY &#9670; GUARDRAILS &#9670;
+            </span>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 2: AGENTS VS AUTOMATION
+         =========================================== -->
+    <section class="slide content-slide" aria-label="Agents vs Automation">
+        <span class="slide-num">02 / 13</span>
+        <div class="slide-content">
+            <div class="label reveal">THE DIFFERENCE</div>
+            <h2 class="reveal">Agents vs<br>Automation.</h2>
+            <div class="comparison reveal">
+                <div class="comparison-col">
+                    <div class="label">SCRIPT</div>
+                    <div class="divider"></div>
+                    <p class="body-text">"Send this email."</p>
+                    <p class="body-text" style="opacity: 0.5;">Does exactly one thing. Nothing more.</p>
+                </div>
+                <div class="comparison-col">
+                    <div class="label" style="color: var(--accent);">AGENT</div>
+                    <div class="divider"></div>
+                    <p class="body-text">"Make sure this customer gets a response within 4 hours."</p>
+                    <p class="body-text" style="opacity: 0.5;">Figures out the <strong>how</strong> &mdash; checks if someone responded, drafts a reply, escalates if complex.</p>
+                </div>
+            </div>
+            <p class="body-text reveal" style="margin-top: var(--element-gap); opacity: 0.6;">Goal-driven, not instruction-driven.</p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 3: THE AGENT LOOP
+         =========================================== -->
+    <section class="slide content-slide" aria-label="The Agent Loop">
+        <span class="slide-num">03 / 13</span>
+        <div class="slide-content">
+            <div class="label reveal">THE CORE PATTERN</div>
+            <h2 class="reveal">The Agent<br>Loop.</h2>
+            <div class="flow">
+                <div class="flow-step">Observe</div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-step">Decide</div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-step">Act</div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-step">Observe Result</div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-step" style="border-color: var(--accent); color: var(--accent);">Repeat</div>
+            </div>
+            <p class="body-text reveal" style="margin-top: var(--content-gap);">Agents handle <strong>exceptions</strong>. When something unexpected happens, they adapt, retry, or escalate to a human.</p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 4: THREE COMPONENTS
+         =========================================== -->
+    <section class="slide content-slide" aria-label="Three Components">
+        <span class="slide-num">04 / 13</span>
+        <div class="slide-content">
+            <div class="label reveal">EVERY AGENT NEEDS</div>
+            <h2 class="reveal">Three<br>Components.</h2>
+            <div class="three-up">
+                <div class="card reveal">
+                    <div class="card-title">Perception.</div>
+                    <div class="card-text">APIs, databases, documents &mdash; how the agent sees the world. Only as good as what it can observe.</div>
+                </div>
+                <div class="card reveal">
+                    <div class="card-title">Decision Logic.</div>
+                    <div class="card-text">Structured rules for routine cases. Invoke the LLM only for ambiguous situations.</div>
+                </div>
+                <div class="card reveal">
+                    <div class="card-title">Action Interface.</div>
+                    <div class="card-text">How the agent affects the world. Every action: <strong>logged, reversible, permissioned</strong>.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 5: TOOLS
+         =========================================== -->
+    <section class="slide content-slide" aria-label="Tools">
+        <span class="slide-num">05 / 13</span>
+        <div class="slide-content">
+            <div class="label reveal">ACTION LAYER</div>
+            <h2 class="reveal">Tools.</h2>
+            <ul class="bullet-list reveal" style="margin-top: var(--content-gap);">
+                <li>Tools = <strong>functions</strong> the agent can call</li>
+                <li>Each tool does <strong>one thing</strong>: send email, query DB, create event</li>
+                <li>The model <strong>doesn't execute</strong> tools &mdash; it <strong>requests</strong> them</li>
+                <li>Good design: one job, clear inputs/outputs, no silent failures</li>
+            </ul>
+            <div class="code-block reveal" style="margin-top: var(--content-gap);">
+                <span class="dim">// The model outputs:</span><br>
+                { <span class="accent">"tool"</span>: "send_email",<br>
+                &nbsp;&nbsp;<span class="accent">"params"</span>: { "to": "user@example.com",<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"subject": "Your order shipped" } }
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 6: HOW TOOL CALLING WORKS
+         =========================================== -->
+    <section class="slide content-slide" aria-label="Tool Calling">
+        <span class="slide-num">06 / 13</span>
+        <div class="slide-content">
+            <div class="label reveal">THE FLOW</div>
+            <h2 class="reveal">How Tool Calling<br>Works.</h2>
+            <div class="flow" style="margin-top: var(--content-gap);">
+                <div class="flow-step">Agent Request</div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-step">Validate</div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-step">Execute</div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-step">Return Result</div>
+            </div>
+            <div class="hairline reveal" style="margin-top: var(--content-gap);"></div>
+            <ul class="bullet-list reveal" style="margin-top: var(--element-gap);">
+                <li>Orchestration layer checks <strong>permissions</strong> &amp; validates <strong>parameters</strong></li>
+                <li>Executes the function, captures the result</li>
+                <li>Feeds structured data back &mdash; agent reasons about what to do next</li>
+                <li>The agent knows <strong>what</strong> the tool does, not <strong>how</strong></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 7: SYSTEM PROMPTS
+         =========================================== -->
+    <section class="slide content-slide" aria-label="System Prompts">
+        <span class="slide-num">07 / 13</span>
+        <div class="slide-content">
+            <div class="label reveal">IDENTITY &amp; RULES</div>
+            <h2 class="reveal">System<br>Prompts.</h2>
+            <div class="comparison reveal" style="margin-top: var(--content-gap);">
+                <div class="comparison-col">
+                    <div class="label" style="opacity: 0.4;">BAD</div>
+                    <div class="divider"></div>
+                    <div class="code-block" style="margin-top: 0;">
+                        "You are a helpful<br>assistant."
+                    </div>
+                </div>
+                <div class="comparison-col">
+                    <div class="label" style="color: var(--accent);">GOOD</div>
+                    <div class="divider"></div>
+                    <div class="code-block" style="margin-top: 0;">
+                        "You are a support agent for<br>
+                        Acme Corp. You have access to<br>
+                        tickets and KB. <span class="accent">Never issue<br>
+                        refunds over $100 without<br>
+                        human approval.</span>"
+                    </div>
+                </div>
+            </div>
+            <p class="body-text reveal" style="margin-top: var(--element-gap); opacity: 0.6;">Be specific. Define the agent's identity, capabilities, and constraints.</p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 8: CONTEXT & MEMORY
+         =========================================== -->
+    <section class="slide content-slide" aria-label="Context and Memory">
+        <span class="slide-num">08 / 13</span>
+        <div class="slide-content">
+            <div class="label reveal">PERSISTENCE</div>
+            <h2 class="reveal">Context &amp;<br>Memory.</h2>
+            <div class="comparison reveal" style="margin-top: var(--content-gap);">
+                <div class="comparison-col">
+                    <div class="label">CONTEXT WINDOW</div>
+                    <div class="divider"></div>
+                    <p class="body-text">Active work &mdash; the current task, recent messages, immediate state.</p>
+                    <p class="body-text" style="opacity: 0.5; margin-top: 0.5em;">Limited. Even 200K tokens fills up.</p>
+                </div>
+                <div class="comparison-col">
+                    <div class="label">EXTERNAL MEMORY</div>
+                    <div class="divider"></div>
+                    <p class="body-text">History &mdash; completed tasks, logs, summaries, past decisions.</p>
+                    <p class="body-text" style="opacity: 0.5; margin-top: 0.5em;">Doubles as an <strong>audit trail</strong> for debugging.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 9: MODEL SELECTION
+         =========================================== -->
+    <section class="slide content-slide" aria-label="Model Selection">
+        <span class="slide-num">09 / 13</span>
+        <div class="slide-content">
+            <div class="label reveal">CHOOSING RIGHT</div>
+            <h2 class="reveal">Model<br>Selection.</h2>
+            <div class="tier-grid">
+                <div class="tier reveal">
+                    <div class="tier-label">FRONTIER</div>
+                    <div class="divider"></div>
+                    <div class="tier-models">Opus &middot; GPT-4o</div>
+                    <div class="tier-use">Complex reasoning, planning, ambiguous decisions. Slow, expensive.</div>
+                </div>
+                <div class="tier reveal">
+                    <div class="tier-label" style="color: var(--accent);">MID-TIER</div>
+                    <div class="divider"></div>
+                    <div class="tier-models">Sonnet &middot; 4o-mini</div>
+                    <div class="tier-use">Most agent tasks. Good balance of capability, speed, and cost.</div>
+                </div>
+                <div class="tier reveal">
+                    <div class="tier-label">SMALL / FAST</div>
+                    <div class="divider"></div>
+                    <div class="tier-models">Haiku &middot; Flash</div>
+                    <div class="tier-use">Classification, routing, simple extraction. High-volume, cheap.</div>
+                </div>
+            </div>
+            <p class="body-text reveal" style="margin-top: var(--element-gap); opacity: 0.6;">Not every task needs the most powerful model.</p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 10: MODEL ROUTING
+         =========================================== -->
+    <section class="slide content-slide" aria-label="Model Routing">
+        <span class="slide-num">10 / 13</span>
+        <div class="slide-content">
+            <div class="label reveal">IN PRACTICE</div>
+            <h2 class="reveal">Model<br>Routing.</h2>
+            <div class="flow" style="margin-top: var(--content-gap);">
+                <div class="flow-step">Haiku<br><span style="font-weight: 400; font-size: 0.7em;">CLASSIFY</span></div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-step" style="border-color: var(--accent);">Sonnet<br><span style="font-weight: 400; font-size: 0.7em;">HANDLE</span></div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-step">Opus<br><span style="font-weight: 400; font-size: 0.7em;">EDGE CASES</span></div>
+            </div>
+            <div class="hairline reveal" style="margin-top: var(--content-gap);"></div>
+            <p class="body-text reveal" style="margin-top: var(--element-gap);">Like a company &mdash; you don't send the CEO to answer every support ticket.</p>
+            <ul class="bullet-list reveal" style="margin-top: var(--element-gap);">
+                <li>A <strong>10x cheaper</strong> model that handles 80% of cases saves you a ton</li>
+                <li>Latency matters for user-facing agents &mdash; faster model = better UX</li>
+                <li>Consider: <strong>cost</strong> &middot; <strong>latency</strong> &middot; <strong>complexity</strong> &middot; <strong>tool calling support</strong></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 11: PLANNING
+         =========================================== -->
+    <section class="slide content-slide" aria-label="Planning">
+        <span class="slide-num">11 / 13</span>
+        <div class="slide-content">
+            <div class="label reveal">MOST IMPORTANT STEP</div>
+            <h2 class="reveal">Plan Before<br>You Execute.</h2>
+            <div class="flow" style="margin-top: var(--content-gap);">
+                <div class="flow-step" style="border-color: var(--accent);">Agent Plans</div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-step">Human Reviews</div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-step">Agent Executes</div>
+            </div>
+            <div class="hairline reveal" style="margin-top: var(--content-gap);"></div>
+            <p class="body-text reveal" style="margin-top: var(--element-gap);">Most agent failures happen because people skip planning.</p>
+            <p class="body-text reveal" style="opacity: 0.6;"><strong>Planning is cheap.</strong> Recovering from bad execution is expensive.</p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 12: FAILURES & GUARDRAILS
+         =========================================== -->
+    <section class="slide content-slide" aria-label="Failures and Guardrails">
+        <span class="slide-num">12 / 13</span>
+        <div class="slide-content">
+            <div class="label reveal">DESIGN FOR IT</div>
+            <h2 class="reveal">Failures &amp;<br>Guardrails.</h2>
+            <div class="three-up" style="margin-top: var(--content-gap);">
+                <div class="card reveal">
+                    <div class="card-title">Retry.</div>
+                    <div class="card-text">Transient failures &mdash; network timeouts, rate limits. Exponential backoff.</div>
+                </div>
+                <div class="card reveal">
+                    <div class="card-title">Escalate.</div>
+                    <div class="card-text">Low confidence? Stop and ask a human. Human-in-the-loop.</div>
+                </div>
+                <div class="card reveal">
+                    <div class="card-title">Fail Safe.</div>
+                    <div class="card-text">Never destroy data. Always fail in a way that's recoverable.</div>
+                </div>
+            </div>
+            <div class="hairline reveal" style="margin-top: var(--content-gap);"></div>
+            <p class="body-text reveal" style="margin-top: var(--element-gap);"><strong>Guardrails</strong> = hard limits the agent can't bypass. <strong>Permissions</strong> = role-based access. Make failures <strong>observable</strong>.</p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 13: NOW YOU BUILD
+         =========================================== -->
+    <section class="slide title-slide" aria-label="Transition to Arena">
+        <span class="slide-num">13 / 13</span>
+        <div class="pill reveal" style="margin-bottom: var(--content-gap);">THE ARENA</div>
+        <h1 class="reveal">Now You<br>Build.</h1>
+        <p class="subtitle reveal">You've learned the theory. Time to apply it.</p>
+        <div class="cta reveal" style="margin-top: var(--content-gap);">LET'S GO &rarr;</div>
+        <div class="ticker">
+            <span class="ticker-inner">
+                OBSERVE &#9670; DECIDE &#9670; ACT &#9670; REPEAT &#9670; BUILD TOOLS &#9670; WRITE PROMPTS &#9670; SHIP AGENTS &#9670; BREAK THINGS &#9670;
+                OBSERVE &#9670; DECIDE &#9670; ACT &#9670; REPEAT &#9670; BUILD TOOLS &#9670; WRITE PROMPTS &#9670; SHIP AGENTS &#9670; BREAK THINGS &#9670;
+            </span>
+        </div>
+    </section>
+
+    <!-- ===========================================
+       PRESENTATION CONTROLLER
+       =========================================== -->
+    <script>
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.currentSlide = 0;
+                this.isScrolling = false;
+                this.setupIntersectionObserver();
+                this.setupKeyboardNav();
+                this.setupTouchNav();
+                this.setupWheelNav();
+                this.setupProgressBar();
+                this.setupNavDots();
+            }
+
+            setupIntersectionObserver() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            const index = Array.from(this.slides).indexOf(entry.target);
+                            if (index !== -1) {
+                                this.currentSlide = index;
+                                this.updateProgressBar();
+                                this.updateNavDots();
+                            }
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                this.slides.forEach(slide => observer.observe(slide));
+            }
+
+            goToSlide(index) {
+                if (index >= 0 && index < this.slides.length) {
+                    this.slides[index].scrollIntoView({ behavior: 'smooth' });
+                    this.currentSlide = index;
+                    this.updateProgressBar();
+                    this.updateNavDots();
+                }
+            }
+
+            setupKeyboardNav() {
+                document.addEventListener('keydown', (e) => {
+                    switch(e.key) {
+                        case 'ArrowDown':
+                        case 'ArrowRight':
+                        case ' ':
+                        case 'PageDown':
+                            e.preventDefault();
+                            this.goToSlide(this.currentSlide + 1);
+                            break;
+                        case 'ArrowUp':
+                        case 'ArrowLeft':
+                        case 'PageUp':
+                            e.preventDefault();
+                            this.goToSlide(this.currentSlide - 1);
+                            break;
+                        case 'Home':
+                            e.preventDefault();
+                            this.goToSlide(0);
+                            break;
+                        case 'End':
+                            e.preventDefault();
+                            this.goToSlide(this.slides.length - 1);
+                            break;
+                    }
+                });
+            }
+
+            setupTouchNav() {
+                let startY = 0;
+                document.addEventListener('touchstart', (e) => {
+                    startY = e.touches[0].clientY;
+                }, { passive: true });
+
+                document.addEventListener('touchend', (e) => {
+                    const diff = startY - e.changedTouches[0].clientY;
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0) this.goToSlide(this.currentSlide + 1);
+                        else this.goToSlide(this.currentSlide - 1);
+                    }
+                }, { passive: true });
+            }
+
+            setupWheelNav() {
+                let lastScroll = 0;
+                document.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const now = Date.now();
+                    if (now - lastScroll < 800) return;
+                    lastScroll = now;
+
+                    if (e.deltaY > 0) this.goToSlide(this.currentSlide + 1);
+                    else this.goToSlide(this.currentSlide - 1);
+                }, { passive: false });
+            }
+
+            setupProgressBar() {
+                this.progressBar = document.getElementById('progressBar');
+                this.updateProgressBar();
+            }
+
+            updateProgressBar() {
+                if (!this.progressBar) return;
+                const progress = ((this.currentSlide + 1) / this.slides.length) * 100;
+                this.progressBar.style.width = progress + '%';
+            }
+
+            setupNavDots() {
+                const container = document.getElementById('navDots');
+                if (!container) return;
+
+                this.slides.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+                    dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+                    dot.addEventListener('click', () => this.goToSlide(i));
+                    container.appendChild(dot);
+                });
+            }
+
+            updateNavDots() {
+                const dots = document.querySelectorAll('.nav-dot');
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === this.currentSlide);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new SlidePresentation();
+        });
+    </script>
+</body>
+</html>
