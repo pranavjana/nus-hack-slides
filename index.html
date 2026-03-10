@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Agents 101 — TinyFish Workshop</title>
+    <title>Intro to AI Agents — Hackerschool Week 8</title>
 
     <!-- Fonts: Inter for headlines, IBM Plex Mono for body/labels -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -56,6 +56,8 @@
         }
         body {
             background: var(--bg);
+            background-image: url("data:image/svg+xml,%3Csvg width='48' height='48' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='48' y1='0' x2='48' y2='48' stroke='%23000' stroke-opacity='0.1' stroke-width='1' stroke-dasharray='2 4'/%3E%3Cline x1='0' y1='48' x2='48' y2='48' stroke='%23000' stroke-opacity='0.1' stroke-width='1' stroke-dasharray='2 4'/%3E%3C/svg%3E");
+            background-size: 48px 48px;
             color: var(--ink);
             font-family: var(--font-mono);
             font-size: var(--body-size);
@@ -531,11 +533,11 @@
          SLIDE 1: TITLE
          =========================================== -->
     <section class="slide title-slide" aria-label="Title">
-        <span class="slide-num">01 / 13</span>
-        <div class="pill reveal" style="margin-bottom: var(--content-gap);">TINYFISH WORKSHOP</div>
-        <h1 class="reveal">AI Agents<br>101.</h1>
+        <span class="slide-num">01 / 12</span>
+        <div class="pill reveal" style="margin-bottom: var(--content-gap);">HACKERSCHOOL WEEK 8</div>
+        <h1 class="reveal">Intro to<br>AI Agents.</h1>
         <p class="subtitle reveal">What it takes to build AI systems that work.</p>
-        <p class="meta reveal">Pranav Janakiraman &mdash; NUS Hackers</p>
+        <p class="meta reveal">Pranav Janakiraman &mdash; Hackerschool Week 8</p>
         <div class="ticker">
             <span class="ticker-inner">
                 OBSERVE &#9670; DECIDE &#9670; ACT &#9670; REPEAT &#9670; PERCEPTION &#9670; DECISION &#9670; ACTION &#9670; TOOLS &#9670; MEMORY &#9670; GUARDRAILS &#9670;
@@ -545,28 +547,51 @@
     </section>
 
     <!-- ===========================================
-         SLIDE 2: AGENTS VS AUTOMATION
+         SLIDE 2: ABOUT ME
          =========================================== -->
-    <section class="slide content-slide" aria-label="Agents vs Automation">
-        <span class="slide-num">02 / 13</span>
+    <section class="slide content-slide" aria-label="About Me">
+        <span class="slide-num">02 / 12</span>
+        <div class="slide-content" style="flex-direction: row; align-items: center; gap: clamp(2rem, 5vw, 5rem);">
+            <div style="flex: 1;">
+                <div class="label reveal">ABOUT ME</div>
+                <h2 class="reveal">Hi, I'm Pranav. &#128075;</h2>
+                <div class="divider reveal"></div>
+                <ul class="bullet-list reveal" style="margin-top: var(--content-gap);">
+                    <li><strong>Product @ TinyFish</strong></li>
+                    <li>Won NUS Orbital &mdash; built an agent system that schedules tasks for you</li>
+                    <li>Currently building <strong>Ideas</strong> &mdash; your AI second brain for all your ideas and tasks</li>
+                </ul>
+                <img src="ideas-banner.png" alt="Ideas app" class="reveal" style="margin-top: var(--content-gap); width: 100%; max-width: 500px; height: auto; border-radius: 4px; display: block; margin-left: auto; margin-right: auto;">
+            </div>
+            <div class="reveal" style="flex-shrink: 0;">
+                <img src="pranav.png" alt="Pranav Janakiraman" style="width: clamp(150px, 20vw, 280px); height: clamp(150px, 20vw, 280px); object-fit: cover; object-position: center 20%; border-radius: 4px; border: 2px solid var(--ink);">
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 3: WHAT IS AN AGENT?
+         =========================================== -->
+    <section class="slide content-slide" aria-label="What is an Agent">
+        <span class="slide-num">03 / 12</span>
         <div class="slide-content">
-            <div class="label reveal">THE DIFFERENCE</div>
-            <h2 class="reveal">Agents vs<br>Automation.</h2>
-            <div class="comparison reveal">
+            <div class="label reveal">THE BASICS</div>
+            <h2 class="reveal">What is<br>an Agent?</h2>
+            <p class="body-text reveal" style="margin-top: var(--content-gap);">A system that takes actions on your behalf based on <strong>goals</strong>, not instructions &mdash; often with a level of reasoning involved.</p>
+            <div class="comparison reveal" style="margin-top: var(--content-gap);">
                 <div class="comparison-col">
                     <div class="label">SCRIPT</div>
                     <div class="divider"></div>
-                    <p class="body-text">"Send this email."</p>
-                    <p class="body-text" style="opacity: 0.5;">Does exactly one thing. Nothing more.</p>
+                    <p class="body-text">"Send an email to john@example.com."</p>
+                    <p class="body-text" style="opacity: 0.5;">One input, one output. Done.</p>
                 </div>
                 <div class="comparison-col">
                     <div class="label" style="color: var(--accent);">AGENT</div>
                     <div class="divider"></div>
-                    <p class="body-text">"Make sure this customer gets a response within 4 hours."</p>
-                    <p class="body-text" style="opacity: 0.5;">Figures out the <strong>how</strong> &mdash; checks if someone responded, drafts a reply, escalates if complex.</p>
+                    <p class="body-text">"Get me to Tokyo next week as cheap as possible."</p>
+                    <p class="body-text" style="opacity: 0.5;">Searches multiple airlines. Compares prices and layovers. Checks your calendar for conflicts. Books the best option. Adds it to your itinerary.</p>
                 </div>
             </div>
-            <p class="body-text reveal" style="margin-top: var(--element-gap); opacity: 0.6;">Goal-driven, not instruction-driven.</p>
         </div>
     </section>
 
@@ -574,7 +599,7 @@
          SLIDE 3: THE AGENT LOOP
          =========================================== -->
     <section class="slide content-slide" aria-label="The Agent Loop">
-        <span class="slide-num">03 / 13</span>
+        <span class="slide-num">04 / 12</span>
         <div class="slide-content">
             <div class="label reveal">THE CORE PATTERN</div>
             <h2 class="reveal">The Agent<br>Loop.</h2>
@@ -589,7 +614,14 @@
                 <span class="flow-arrow">&rarr;</span>
                 <div class="flow-step" style="border-color: var(--accent); color: var(--accent);">Repeat</div>
             </div>
-            <p class="body-text reveal" style="margin-top: var(--content-gap);">Agents handle <strong>exceptions</strong>. When something unexpected happens, they adapt, retry, or escalate to a human.</p>
+            <div class="loop-back reveal" style="margin-top: 0;">
+                <svg width="100%" height="70" viewBox="0 0 900 70" preserveAspectRatio="xMidYMid meet" style="max-width: 900px; display: block; overflow: visible;">
+                    <path d="M 50 15 L 50 50 Q 50 60 60 60 L 860 60 Q 870 60 870 50 L 870 5" fill="none" stroke="#E8611A" stroke-width="2.5"/>
+                    <!-- Arrowhead pointing up at Observe -->
+                    <polygon points="43,18 50,3 57,18" fill="#E8611A"/>
+                </svg>
+            </div>
+            <p class="body-text reveal" style="margin-top: var(--content-gap);">This loop keeps going until the goal is determined to be met by the agent.</p>
         </div>
     </section>
 
@@ -597,22 +629,25 @@
          SLIDE 4: THREE COMPONENTS
          =========================================== -->
     <section class="slide content-slide" aria-label="Three Components">
-        <span class="slide-num">04 / 13</span>
+        <span class="slide-num">05 / 12</span>
         <div class="slide-content">
-            <div class="label reveal">EVERY AGENT NEEDS</div>
-            <h2 class="reveal">Three<br>Components.</h2>
+            <div class="label reveal">BUILDING BLOCKS</div>
+            <h2 class="reveal">What Every<br>Agent Needs.</h2>
             <div class="three-up">
                 <div class="card reveal">
                     <div class="card-title">Perception.</div>
                     <div class="card-text">APIs, databases, documents &mdash; how the agent sees the world. Only as good as what it can observe.</div>
+                    <div class="card-text" style="color: var(--accent); margin-top: 0.5em; font-weight: 500;">Claude Code's search tool reading your codebase</div>
                 </div>
                 <div class="card reveal">
                     <div class="card-title">Decision Logic.</div>
                     <div class="card-text">Structured rules for routine cases. Invoke the LLM only for ambiguous situations.</div>
+                    <div class="card-text" style="color: var(--accent); margin-top: 0.5em; font-weight: 500;">Claude deciding whether to edit a file or ask you first</div>
                 </div>
                 <div class="card reveal">
                     <div class="card-title">Action Interface.</div>
                     <div class="card-text">How the agent affects the world. Every action: <strong>logged, reversible, permissioned</strong>.</div>
+                    <div class="card-text" style="color: var(--accent); margin-top: 0.5em; font-weight: 500;">Claude Code writing code, running tests, creating commits</div>
                 </div>
             </div>
         </div>
@@ -622,7 +657,7 @@
          SLIDE 5: TOOLS
          =========================================== -->
     <section class="slide content-slide" aria-label="Tools">
-        <span class="slide-num">05 / 13</span>
+        <span class="slide-num">06 / 12</span>
         <div class="slide-content">
             <div class="label reveal">ACTION LAYER</div>
             <h2 class="reveal">Tools.</h2>
@@ -630,14 +665,18 @@
                 <li>Tools = <strong>functions</strong> the agent can call</li>
                 <li>Each tool does <strong>one thing</strong>: send email, query DB, create event</li>
                 <li>The model <strong>doesn't execute</strong> tools &mdash; it <strong>requests</strong> them</li>
-                <li>Good design: one job, clear inputs/outputs, no silent failures</li>
             </ul>
             <div class="code-block reveal" style="margin-top: var(--content-gap);">
-                <span class="dim">// The model outputs:</span><br>
-                { <span class="accent">"tool"</span>: "send_email",<br>
-                &nbsp;&nbsp;<span class="accent">"params"</span>: { "to": "user@example.com",<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"subject": "Your order shipped" } }
+                <span class="accent">const</span> result = <span class="accent">await</span> generateText({<br>
+                &nbsp;&nbsp;model: openai(<span class="accent">'gpt-4o'</span>),&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">// which LLM to use</span><br>
+                &nbsp;&nbsp;tools: { weather: tool({<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;description: <span class="accent">'Get weather in a city'</span>,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">// tells the model what this tool does</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;parameters: z.object({ city: z.string() }),<span class="dim"> // what inputs the tool accepts</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;execute: <span class="accent">async</span> ({ city }) =&gt; getWeather(city),<span class="dim"> // function you define for the agent to run</span><br>
+                &nbsp;&nbsp;}) },<br>
+                });
             </div>
+            <p class="body-text reveal" style="margin-top: var(--element-gap); color: var(--accent);">Tool definition in the Vercel AI SDK &mdash; we'll use this later!</p>
         </div>
     </section>
 
@@ -645,22 +684,35 @@
          SLIDE 6: HOW TOOL CALLING WORKS
          =========================================== -->
     <section class="slide content-slide" aria-label="Tool Calling">
-        <span class="slide-num">06 / 13</span>
+        <span class="slide-num">07 / 12</span>
         <div class="slide-content">
             <div class="label reveal">THE FLOW</div>
             <h2 class="reveal">How Tool Calling<br>Works.</h2>
-            <div class="flow" style="margin-top: var(--content-gap);">
-                <div class="flow-step">Agent Request</div>
+            <div class="flow" style="margin-top: var(--content-gap); align-items: stretch;">
+                <div class="flow-step" style="text-align: left; line-height: 1.4;">
+                    <span style="font-size: 1.5em;">&#129302;</span><br>
+                    <span style="font-size: 0.7em; font-weight: 400;">"What's the weather<br>in Singapore?"</span>
+                </div>
                 <span class="flow-arrow">&rarr;</span>
-                <div class="flow-step">Validate</div>
+                <div class="flow-step" style="text-align: left; line-height: 1.4;">
+                    <span style="font-size: 0.7em;">CALLS TOOL</span><br>
+                    <span style="font-size: 0.7em; font-weight: 400; font-family: var(--font-mono);">getWeather(<span style="color: var(--accent);">"SG"</span>)</span>
+                </div>
                 <span class="flow-arrow">&rarr;</span>
-                <div class="flow-step">Execute</div>
+                <div class="flow-step" style="text-align: left; line-height: 1.4; border-color: var(--accent);">
+                    <span style="font-size: 0.7em; color: var(--accent);">GETS DATA BACK</span><br>
+                    <span style="font-size: 0.6em; font-weight: 400; opacity: 0.6;">the agent reads this info</span><br>
+                    <span style="font-size: 0.7em; font-weight: 400; font-family: var(--font-mono);">{ temp: 31, humid: 82% }</span>
+                </div>
                 <span class="flow-arrow">&rarr;</span>
-                <div class="flow-step">Return Result</div>
+                <div class="flow-step" style="text-align: left; line-height: 1.4;">
+                    <span style="font-size: 1.5em;">&#129302;</span><br>
+                    <span style="font-size: 0.7em; font-weight: 400;">"It's 31&deg;C and<br>humid in Singapore!"</span>
+                </div>
             </div>
             <div class="hairline reveal" style="margin-top: var(--content-gap);"></div>
             <ul class="bullet-list reveal" style="margin-top: var(--element-gap);">
-                <li>Orchestration layer checks <strong>permissions</strong> &amp; validates <strong>parameters</strong></li>
+                <li>Orchestration layer <span style="color: var(--accent);">(Vercel AI SDK, Claude Code, LangChain, etc.)</span> checks <strong>permissions</strong> &amp; validates <strong>parameters</strong></li>
                 <li>Executes the function, captures the result</li>
                 <li>Feeds structured data back &mdash; agent reasons about what to do next</li>
                 <li>The agent knows <strong>what</strong> the tool does, not <strong>how</strong></li>
@@ -672,7 +724,7 @@
          SLIDE 7: SYSTEM PROMPTS
          =========================================== -->
     <section class="slide content-slide" aria-label="System Prompts">
-        <span class="slide-num">07 / 13</span>
+        <span class="slide-num">08 / 12</span>
         <div class="slide-content">
             <div class="label reveal">IDENTITY &amp; RULES</div>
             <h2 class="reveal">System<br>Prompts.</h2>
@@ -685,7 +737,7 @@
                     </div>
                 </div>
                 <div class="comparison-col">
-                    <div class="label" style="color: var(--accent);">GOOD</div>
+                    <div class="label" style="color: var(--accent);">BETTER (BUT STILL PRETTY BAD)</div>
                     <div class="divider"></div>
                     <div class="code-block" style="margin-top: 0;">
                         "You are a support agent for<br>
@@ -696,7 +748,7 @@
                     </div>
                 </div>
             </div>
-            <p class="body-text reveal" style="margin-top: var(--element-gap); opacity: 0.6;">Be specific. Define the agent's identity, capabilities, and constraints.</p>
+            <p class="body-text reveal" style="margin-top: var(--element-gap);">The best prompts have great <strong>structure</strong>. Check out the <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices" target="_blank" style="color: var(--accent); text-decoration: underline;">Claude Prompting Best Practices</a> guide &rarr;</p>
         </div>
     </section>
 
@@ -704,22 +756,40 @@
          SLIDE 8: CONTEXT & MEMORY
          =========================================== -->
     <section class="slide content-slide" aria-label="Context and Memory">
-        <span class="slide-num">08 / 13</span>
+        <span class="slide-num">09 / 12</span>
         <div class="slide-content">
             <div class="label reveal">PERSISTENCE</div>
             <h2 class="reveal">Context &amp;<br>Memory.</h2>
-            <div class="comparison reveal" style="margin-top: var(--content-gap);">
-                <div class="comparison-col">
-                    <div class="label">CONTEXT WINDOW</div>
-                    <div class="divider"></div>
-                    <p class="body-text">Active work &mdash; the current task, recent messages, immediate state.</p>
-                    <p class="body-text" style="opacity: 0.5; margin-top: 0.5em;">Limited. Even 200K tokens fills up.</p>
+            <!-- Context rot chart -->
+            <div class="reveal" style="margin-top: var(--content-gap); display: flex; gap: clamp(1rem, 3vw, 3rem); align-items: flex-start;">
+                <div style="flex: 1;">
+                    <svg width="100%" height="220" viewBox="0 0 300 140" preserveAspectRatio="xMidYMid meet" style="display: block; overflow: visible;">
+                        <!-- Axes -->
+                        <line x1="40" y1="10" x2="40" y2="120" stroke="#111" stroke-width="1.5"/>
+                        <line x1="40" y1="120" x2="290" y2="120" stroke="#111" stroke-width="1.5"/>
+                        <!-- Labels -->
+                        <text x="15" y="65" font-family="IBM Plex Mono" font-size="7" fill="#111" text-anchor="middle" transform="rotate(-90, 15, 65)" text-transform="uppercase" letter-spacing="0.1em">REASONING</text>
+                        <text x="165" y="137" font-family="IBM Plex Mono" font-size="7" fill="#111" text-anchor="middle" letter-spacing="0.1em">CONTEXT LENGTH</text>
+                        <!-- Good zone -->
+                        <path d="M 40 20 Q 100 22 150 30 Q 180 38 200 55" fill="none" stroke="#111" stroke-width="2.5"/>
+                        <!-- Drop off zone -->
+                        <path d="M 200 55 Q 230 80 260 110" fill="none" stroke="#E8611A" stroke-width="2.5"/>
+                        <!-- 200K marker -->
+                        <line x1="200" y1="10" x2="200" y2="120" stroke="#E8611A" stroke-width="1" stroke-dasharray="4,3"/>
+                        <text x="200" y="8" font-family="IBM Plex Mono" font-size="7" fill="#E8611A" text-anchor="middle" font-weight="700">~200K</text>
+                    </svg>
+                    <p class="body-text" style="opacity: 0.6; margin-top: 0.3em;">Even with 1M token windows, reasoning degrades past ~200K. <strong style="color: var(--accent);">Context rot is real.</strong></p>
                 </div>
-                <div class="comparison-col">
-                    <div class="label">EXTERNAL MEMORY</div>
-                    <div class="divider"></div>
-                    <p class="body-text">History &mdash; completed tasks, logs, summaries, past decisions.</p>
-                    <p class="body-text" style="opacity: 0.5; margin-top: 0.5em;">Doubles as an <strong>audit trail</strong> for debugging.</p>
+                <div style="flex: 1;">
+                    <div class="label">WHAT'S IN YOUR MEMORY</div>
+                    <div class="divider" style="margin-bottom: 0.5em;"></div>
+                    <ul class="bullet-list" style="gap: clamp(0.3rem, 0.6vh, 0.5rem);">
+                        <li>System prompt</li>
+                        <li>Tool definitions</li>
+                        <li>Skills / .md files</li>
+                        <li>Conversation history</li>
+                    </ul>
+                    <p class="body-text" style="margin-top: 0.8em; color: var(--accent); font-weight: 500;">Less bloat in memory = better agent. Find the balance.</p>
                 </div>
             </div>
         </div>
@@ -729,31 +799,35 @@
          SLIDE 9: MODEL SELECTION
          =========================================== -->
     <section class="slide content-slide" aria-label="Model Selection">
-        <span class="slide-num">09 / 13</span>
+        <span class="slide-num">10 / 12</span>
         <div class="slide-content">
             <div class="label reveal">CHOOSING RIGHT</div>
             <h2 class="reveal">Model<br>Selection.</h2>
             <div class="tier-grid">
                 <div class="tier reveal">
-                    <div class="tier-label">FRONTIER</div>
+                    <div class="tier-label">OPENAI</div>
                     <div class="divider"></div>
-                    <div class="tier-models">Opus &middot; GPT-4o</div>
-                    <div class="tier-use">Complex reasoning, planning, ambiguous decisions. Slow, expensive.</div>
+                    <div class="tier-models">GPT-5 mini (high)</div>
+                    <div class="tier-use">Agentic index: <strong>45</strong>. Strong tool calling, good reasoning.</div>
                 </div>
                 <div class="tier reveal">
-                    <div class="tier-label" style="color: var(--accent);">MID-TIER</div>
+                    <div class="tier-label" style="color: var(--accent);">ANTHROPIC</div>
                     <div class="divider"></div>
-                    <div class="tier-models">Sonnet &middot; 4o-mini</div>
-                    <div class="tier-use">Most agent tasks. Good balance of capability, speed, and cost.</div>
+                    <div class="tier-models">Claude 4.5 Haiku</div>
+                    <div class="tier-use">Agentic index: <strong>40</strong>. Fast, reliable, great for most agent tasks.</div>
                 </div>
                 <div class="tier reveal">
-                    <div class="tier-label">SMALL / FAST</div>
+                    <div class="tier-label">GOOGLE</div>
                     <div class="divider"></div>
-                    <div class="tier-models">Haiku &middot; Flash</div>
-                    <div class="tier-use">Classification, routing, simple extraction. High-volume, cheap.</div>
+                    <div class="tier-models">Gemini 3.1 Flash Lite</div>
+                    <div class="tier-use">Agentic index: <strong>26</strong>. Cheapest, fastest. Good for simple tasks.</div>
                 </div>
             </div>
-            <p class="body-text reveal" style="margin-top: var(--element-gap); opacity: 0.6;">Not every task needs the most powerful model.</p>
+            <p class="body-text reveal" style="margin-top: var(--element-gap);">Not every task needs the most powerful model. Different models have different <strong>agentic capabilities</strong> &mdash; <span style="color: var(--accent);">a model that isn't the "smartest" may have better tool calling and agentic performance.</span></p>
+            <div class="reveal" style="margin-top: var(--element-gap); display: flex; gap: clamp(0.5rem, 1.5vw, 1.5rem);">
+                <a href="https://skatebench.t3.gg/" target="_blank" class="cta" style="font-size: var(--small-size);">SKATEBENCH &mdash; RANKS MODELS BY NAMING SKATEBOARD TRICKS &rarr;</a>
+                <a href="https://artificialanalysis.ai/models/capabilities/agentic" target="_blank" class="cta" style="font-size: var(--small-size);">ARTIFICIAL ANALYSIS &mdash; AGENTIC INDEX SCORES &rarr;</a>
+            </div>
         </div>
     </section>
 
@@ -761,7 +835,7 @@
          SLIDE 10: MODEL ROUTING
          =========================================== -->
     <section class="slide content-slide" aria-label="Model Routing">
-        <span class="slide-num">10 / 13</span>
+        <span class="slide-num">11 / 12</span>
         <div class="slide-content">
             <div class="label reveal">IN PRACTICE</div>
             <h2 class="reveal">Model<br>Routing.</h2>
@@ -783,58 +857,10 @@
     </section>
 
     <!-- ===========================================
-         SLIDE 11: PLANNING
-         =========================================== -->
-    <section class="slide content-slide" aria-label="Planning">
-        <span class="slide-num">11 / 13</span>
-        <div class="slide-content">
-            <div class="label reveal">MOST IMPORTANT STEP</div>
-            <h2 class="reveal">Plan Before<br>You Execute.</h2>
-            <div class="flow" style="margin-top: var(--content-gap);">
-                <div class="flow-step" style="border-color: var(--accent);">Agent Plans</div>
-                <span class="flow-arrow">&rarr;</span>
-                <div class="flow-step">Human Reviews</div>
-                <span class="flow-arrow">&rarr;</span>
-                <div class="flow-step">Agent Executes</div>
-            </div>
-            <div class="hairline reveal" style="margin-top: var(--content-gap);"></div>
-            <p class="body-text reveal" style="margin-top: var(--element-gap);">Most agent failures happen because people skip planning.</p>
-            <p class="body-text reveal" style="opacity: 0.6;"><strong>Planning is cheap.</strong> Recovering from bad execution is expensive.</p>
-        </div>
-    </section>
-
-    <!-- ===========================================
-         SLIDE 12: FAILURES & GUARDRAILS
-         =========================================== -->
-    <section class="slide content-slide" aria-label="Failures and Guardrails">
-        <span class="slide-num">12 / 13</span>
-        <div class="slide-content">
-            <div class="label reveal">DESIGN FOR IT</div>
-            <h2 class="reveal">Failures &amp;<br>Guardrails.</h2>
-            <div class="three-up" style="margin-top: var(--content-gap);">
-                <div class="card reveal">
-                    <div class="card-title">Retry.</div>
-                    <div class="card-text">Transient failures &mdash; network timeouts, rate limits. Exponential backoff.</div>
-                </div>
-                <div class="card reveal">
-                    <div class="card-title">Escalate.</div>
-                    <div class="card-text">Low confidence? Stop and ask a human. Human-in-the-loop.</div>
-                </div>
-                <div class="card reveal">
-                    <div class="card-title">Fail Safe.</div>
-                    <div class="card-text">Never destroy data. Always fail in a way that's recoverable.</div>
-                </div>
-            </div>
-            <div class="hairline reveal" style="margin-top: var(--content-gap);"></div>
-            <p class="body-text reveal" style="margin-top: var(--element-gap);"><strong>Guardrails</strong> = hard limits the agent can't bypass. <strong>Permissions</strong> = role-based access. Make failures <strong>observable</strong>.</p>
-        </div>
-    </section>
-
-    <!-- ===========================================
-         SLIDE 13: NOW YOU BUILD
+         SLIDE 12: NOW YOU BUILD
          =========================================== -->
     <section class="slide title-slide" aria-label="Transition to Arena">
-        <span class="slide-num">13 / 13</span>
+        <span class="slide-num">12 / 12</span>
         <div class="pill reveal" style="margin-bottom: var(--content-gap);">THE ARENA</div>
         <h1 class="reveal">Now You<br>Build.</h1>
         <p class="subtitle reveal">You've learned the theory. Time to apply it.</p>
